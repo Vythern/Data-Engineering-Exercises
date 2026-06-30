@@ -1,0 +1,105 @@
+Spark pretty much always starts with something like this:  
+	sc = SparkContext(local[core_Count], "spark_app_name")
+
+We often use a cluster manager like yarn, kubernetes, or spark standalone.  
+In these cases, we might define the host instead.  
+Otherwise, we can say local to run it on our machine, and set the core count.  
+We can call the application whatever we want, it's just a label.  
+
+sc = SparkContext("local[*]", "rdd_basics")
+"Our spark context is here, and the app is labeled this"
+
+Now we have our context, so spark knows what app and where to work within.  
+With context, we can create an RDD (Resilient Distributed Dataset).  
+An RDD takes data, distributes it, and is resilient- meaning that it can be re-computed.  
+They are also immutable.  This helps ensure the resiliency.  
+
+With our context, we can define our in this general form:  
+
+sc.parallelize(data, numSlices).  
+"Take this data, and make an RDD with it, split among numSlices partitions"
+
+Parallelize converts our python data into an RDD!  
+The data we want to distribute goes in as the first parameter.  
+We can also add in an explicit number of partitions to split among workers.  
+Spark will generally partition among the workers on its own fine.  
+
+RDDs can be a lot of things, eg RDD<INT>, RDD<String>, or...  
+RDD<Tuple>.  This creates a key value pair RDD.  
+
+Note that we will usually not use parallelize for our initial RDDs.  
+We will probably load in a text file, csv or etc.  
+
+For task # 1, steps A, B, and C:  
+from pyspark import SparkContext
+sc = SparkContext("local[*]", "rdd_basics")
+
+numbers1 = sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+numbers2 = sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 4)
+numbers3 = sc.parallelize(range(1, 101))
+
+print(f"Part 1 Numbers:  {numbers1.collect()}")
+print(f"Part 2 Numbers:  {numbers2.collect()}")
+print(f"Part 2 Partitions:  {numbers2.getNumPartitions()}")
+print(f"Part 3 Numbers:  {numbers3.collect()}")
+print(f"Part 3 Partitions:  {numbers3.getNumPartitions()}")
+
+
+# For task # 2, steps A and B:  
+original_numbers = sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+squared_numbers = original_numbers.map(lambda num: num * num)
+
+string_numbers = original_numbers.map(lambda str_num: "num_" + str(str_num))
+
+print(f"Squared Numbers:  {squared_numbers.collect()}")
+print(f"Numbers as strings:  {string_numbers.collect()}")
+
+# For task 3, steps A, B, and C:  
+
+original_numbers = sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+evens = original_numbers.filter(lambda x: x % 2 == 0)
+
+greater_than_5 = original_numbers.filter(lambda x: x > 5)
+
+combined = original_numbers.filter(lambda x: x > 5 and x % 2 == 0)
+
+print(f"Even Numbers:  {evens.collect()})
+print(f"Numbers > 5:  {greater_than_5.collect()})
+print(f"Even Numbers > 5:  {combined.collect()})
+
+# For task # 4, steps A and B:  
+
+# Flatmap is basically the same as map, except if there are multiple results, it is not in a tuple.  
+sentences = sc.parallelize([
+    "Hello World",
+    "Apache Spark is Fast",
+    "PySpark is Python plus Spark"
+])
+
+words = sentences.flatMap(lambda x: x.split())
+
+word_lengths = words.map(lambda x: (x, len(x)))
+
+print(f"Words:  {words.collect()}")
+print(f"Word Lengths:  {word_lengths.collect()}")
+
+
+# For task # 5:  
+
+logs = sc.parallelize([
+    "INFO: User logged in",
+    "ERROR: Connection failed",
+    "INFO: Data processed",
+    "ERROR: Timeout occurred",
+    "DEBUG: Cache hit"
+])
+
+errors = logs.filter(lambda x: x[0:5:1] == "ERROR")
+lines = errors.flatMap(lambda x: x.split())
+error_words = lines.map(lambda x: x.upper())
+
+print(f"Error Words:  {error_words.collect()})"
+
+sc.stop()
