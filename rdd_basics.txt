@@ -1,3 +1,5 @@
+# I did this work on my laptop instead of VSC with a text editor.  All the solutions are here but not in the format of a jupyter notebook, and it includes my study notes.  
+
 Spark pretty much always starts with something like this:  
 	sc = SparkContext(local[core_Count], "spark_app_name")
 
