@@ -1,0 +1,25 @@
+Speaker notes for presentation:  
+Slide 1:  
+Repartitioning is the process of redistributing data from partition to partition.  
+Often times we have uneven workloads, and need to let spark know that the data needs spread out or re-focused.  
+Since spark makes and plans partitions automatically, perhaps spark created a poor split.  
+Perhaps you've given skewed keys, or maybe you intend to group the data later on that could create problems.  
+Repartition() allows us to solve exactly that problem.  
+
+Slide 2:  
+Here's a straightfowards example in action- I just wanted to demonstrate that repartitioning can drastically increase performance.  
+We start by creatiing a dataset and doing a basic map transformation.  
+Spark has limited parallelism here with only a few tasks running at a time, even though more work can be done.  
+
+In the second set of example code, we run the exact same computation, except we repartition first.  
+If you can see, apologies for the small text, the original example runs in about 5 seconds, and this one runs in less than 2.  
+
+Onto slide 3.  
+A couple of things to note when using repartition:  
+Firstly, repartitioning takes a not insignificant time period.  
+Repartitioning is going to add a full shuffle, which is going to take a lot of overhead.  
+This can end up taking longer than just running the operation on the original.  
+Furthermore, repartitioning doesn't always save time.  
+Sometimes, you might end up with too many small tasks, causing lots of time spent managing tasks instead of actually computing.  
+Or, perhaps there just isn't enough of a difference between the partitions to matter.  
+Finding the sweet spot and balancing the partition count is the key.  
