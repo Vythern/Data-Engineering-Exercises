@@ -1,0 +1,16 @@
+11. Skew Handling
+
+Question:
+
+One customer has 50 million transactions while others have only a few hundred.
+Why is the job slow?
+How would you fix it?
+
+
+Answer:  
+
+This is an example of data skew.  If the data is partitioned by customer, then this will result in 
+50 million rows being processed by one executor, while, ages ago, the other executors for the hundreds are well past done.  
+Repartitioning won't fix the imbalance, so we salt the keys.  
+Salting the keys is the process of splitting up a single, typically dominant partition across multiple executors-
+-by virtue of treating the customer key as multiple keys.  

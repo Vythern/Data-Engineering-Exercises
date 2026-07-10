@@ -1,0 +1,19 @@
+We weren't provided any csvs to read from for this challenge, but I figured I'd make some snippets- 
+to show how I would do it.  
+
+"Read all CSVs from a directory
+Infer schema (or define it explicitly)
+Add filename as a column
+Handle malformed records"
+
+
+Read all csvs:  
+Instead of specifying a filename, specify the path where all the csvs are held.  
+
+Infer schema or define it:  
+Yes?  We have to pick one, at least.  There has to be a schema for the dataframe.  Possibly we will need to do a lot of filtering.  
+
+add a filename as a column:  Just use withColumn(F.input_file_name())
+
+handle malformed records:  Use the same filtering and functions we have in the past exercises.  
+Maybe fillna, filter, select only relevant columns, etc.  

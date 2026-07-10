@@ -1,0 +1,15 @@
+13. Optimize a Slow Job
+
+Given code like:
+
+df.join(df2, "id").groupBy("city").count()
+
+How would you optimize this?
+
+Answer:  
+There is not a lot to go off of in this snippet of code.  There are a variety of reasons why it might be slow.  
+One thing that we do know for sure here is that there are two shuffle operations going on.  
+The initial join of df1 and df2, and then grouping them by city count.  
+The most immediately obvious answer is that one of the "States" (based on it having a number of cities) is-
+-much larger than the other.  So instead of distributing the grouped city counts across the cluster, -
+-we can do a broadcast join, sending the smaller state to the executors, and avoid the reshuffle.  
