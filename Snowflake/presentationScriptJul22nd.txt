@@ -1,0 +1,21 @@
+The pipeline of our project begins with a few raw datasets in the form of CSVs.  
+Before we make use of them though, we need to setup our tables- 
+We configure spark to use Apache Iceberg, with a glue catalog for metadata, 
+and we also set our driver to communicate with a specific warehouse location.  
+In this case, our s3 bucket, and prepare reading and writing for our iceberg table with or into it.  
+
+
+We begin the transformation portion of ETL with Spark, filtering the data.  
+There are numerous operations we can perform to clean it, with a few examples here:  
+We might replace null loyalty points of a customer with 0 by default, or alternatively-
+-if the data is crucial, simply drop the records that are null.  
+
+Then, with our cleaned dataframes, we can load up our S3 with the real table data.  
+AWS Glue, designed the way that it is (for interoperability), acts as a central metadata catalog; 
+It lets other tools discover and access these tables without cloning the data.  We read directly from the S3, such as 
+is the case with our snowflake analysis program.  Snowflake is able to access this data, and from there, we can perform our queries and analysis.  
+As you can see here, we can specify the external volume (our S3), a catalog, (glue, which describes our schema and where to find the data)-
+-and the name of the iceberg table.  Now we are ready to query it.  
+And (here) is an example of one of the queries we might run on our tables.  
+
+And here I'll pass on the next slide to Carter for the dataset overview.  
